@@ -24,10 +24,11 @@ global samplingPeriod
 global discardPeriod
 
 
-def plotGraph(A):
+def plotGraph(x,y):
 
-    B = np.array(A)
-    plt.imshow(H)
+    X = np.array(x)
+    Y = np.array(y)
+    plt.scatter(X,Y)
     plt.show()
     return
 
@@ -38,7 +39,9 @@ def plotGraph(A):
 
 
 def main():
-    A =([[1,2,3],[1,2,3]])  
+    x = [1,2,3]
+    y = [1,2,3]
+    plotGraph(x,y)
 
 main()
 
