@@ -1,4 +1,5 @@
 from sympy import *
+import scipy.misc as sp
 
 def createFunction(m,b):
     x = Symbol('x')
@@ -15,5 +16,7 @@ def main():
     equation = createFunction(5,10)
     printLambda(equation)
     print(equation(3))
+    result = (sp.derivative(equation,3))
+    print(result)
     
 main()
