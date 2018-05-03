@@ -6,6 +6,8 @@ from time import sleep
 numCortisol = 10
 numLuciferase = 100
 cortisol = []
+luciferase = []
+
 
 WIDTH = 1000
 HEIGHT = 550
@@ -66,6 +68,51 @@ class vector:
 	def mag(self):
 		return ((self.x ** 2) + (self.y ** 2)) ** 0.5
 
+class Luciferase:
+    def __init__(self):
+        self.velocity = vector(0,0)
+        self.position = self.randomPlacingLuciferase()
+
+    def randomPlacingLuciferase(self):
+        x = random.randint (10, WIDTH-10)
+        y = random.randint (10, HEIGHT-10)
+           
+        return vector(x,y)
+
+    def move (self):
+        frameVector = self.outOfFrameRule()
+        randVector = self.randMove()
+        self.velocity = frameVector + randVector
+        #speed limit
+        self.position += self.velocity
+         
+    def randMove (self):
+        x = random.randint(-5,5)
+        y = random.randint (-5,5)
+        randVector = vector(x,y)
+        return randVector
+
+    def outOfFrameRule(self):
+        frameVector = vector (0,0)
+
+        if self.position.x >= WIDTH:
+                frameVector += vector(-5,0)
+
+        if self.position.x <=0:
+                frameVector += vector (5,0)
+
+        if self.position.y >= HEIGHT:
+                frameVector += vector(0,-5)
+
+        if self.position.y <=0:
+                frameVector += vector (0,5)
+        return frameVector
+
+def initiateLuciferase():
+    for i in range(numLuciferase):
+        newMolecule =Luciferase()
+        luciferase.append(newMolecule)
+    return
 
 class Cortisol:
     def __init__(self):
@@ -129,24 +176,31 @@ def createWindow():
     canvas.pack(side = BOTTOM)
     return simWindow, canvas
 
-def drawCortisol(window,canvas):
+def drawMolecules(window,canvas):
    # cortisolImg = PhotoImage(file = '')
     for i in range(numCortisol):
         #newMolecule = canvas.create_image(molecule[0],molecule[1], image=cortisolImg) 
         newMolecule = canvas.create_rectangle(cortisol[i].position.x,cortisol[i].position.y,cortisol[i].position.x+10,cortisol[i].position.y+10, fill="black")
         cortisol[i].move()
-        
+    for i in range(numLuciferase):
+        #newMolecule = canvas.create_image(molecule[0],molecule[1], image=luciferaseImg) 
+        newMolecule = canvas.create_rectangle(luciferase[i].position.x,luciferase[i].position.y,luciferase[i].position.x+10,luciferase[i].position.y+10, fill="red")
+        luciferase[i].move()
+
     canvas.pack()
     window.update()
     sleep(0.1)
     canvas.delete(ALL)
+
+
     
     
 
 def main():
     window, canvas = createWindow()
     initiateCortisol()
+    initiateLuciferase()
     for i in range(1000000):
-        drawCortisol(window,canvas)
+        drawMolecules(window,canvas)
     
 main()
