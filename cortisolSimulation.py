@@ -4,7 +4,7 @@ import random
 from time import sleep
 
 numCortisol = 10
-numLuciferase = 100
+numLuciferase = 10
 cortisol = []
 luciferase = []
 
@@ -177,14 +177,17 @@ def createWindow():
     return simWindow, canvas
 
 def drawMolecules(window,canvas):
-   # cortisolImg = PhotoImage(file = '')
+    cortisolImage = PhotoImage(file="cortisol.gif")
+    cortisolImage = cortisolImage.subsample(10, 10)
+
+    luciferaseImage = PhotoImage(file="luciferase.gif")
+    luciferaseImage = luciferaseImage.subsample(12, 12)
     for i in range(numCortisol):
-        #newMolecule = canvas.create_image(molecule[0],molecule[1], image=cortisolImg) 
-        newMolecule = canvas.create_rectangle(cortisol[i].position.x,cortisol[i].position.y,cortisol[i].position.x+10,cortisol[i].position.y+10, fill="black")
+        newMolecule = canvas.create_image(cortisol[i].position.x,cortisol[i].position.y, image=cortisolImage) 
+        #newMolecule = canvas.create_rectangle(cortisol[i].position.x,cortisol[i].position.y,cortisol[i].position.x+10,cortisol[i].position.y+10, fill="black")
         cortisol[i].move()
     for i in range(numLuciferase):
-        #newMolecule = canvas.create_image(molecule[0],molecule[1], image=luciferaseImg) 
-        newMolecule = canvas.create_rectangle(luciferase[i].position.x,luciferase[i].position.y,luciferase[i].position.x+10,luciferase[i].position.y+10, fill="red")
+        newMolecule = canvas.create_image(luciferase[i].position.x,luciferase[i].position.y, image=luciferaseImage)
         luciferase[i].move()
 
     canvas.pack()
