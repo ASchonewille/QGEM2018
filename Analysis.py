@@ -20,6 +20,8 @@ global luciferaseUnitLight
 global samplingPeriod
 global discardPeriod
 global targetFunction
+global cortisolValues
+global timeValues
 
 
 def plotGraph(x,y):
@@ -58,15 +60,31 @@ def cutData(x,y):
     yCut = y[1:lengthY]
     return xCut, yCut
 
-
-
 def takeDerivative(x0):
     global targetFunction
     deriv = sci.derivative(targetFunction, x0)
     return deriv
 
+def cortisolCalculation(deriv,time):
+    global cortisolBindingRate
+    global luciferaseUnitLight
+    global cortisolValues
+    global timeValues
+    newValue = deriv*luciferaseUnitLight*cortisolBindingRate
+    cortisolValues.append(newValue)
+    timeValues.append(time)
+    return
+
 def main():
+    global cortisolBindingRate
+    global luciferaseUnitLight
     global targetFunction
+    global cortisolValues
+    global timeValues
+    timeValues = []
+    cortisolValues = []
+    luciferaseUnitLight = 2
+    cortisolBindingRate = 0.0005
     x = [1,2,3]
     y = [2,3,4]
     plotGraph(x,y)
@@ -75,11 +93,13 @@ def main():
     xCut,yCut = cutData(x,y)
     x0 = 1
     deriv = takeDerivative(x0)
+    cortisolCalculation(deriv,x0)
 
     printLambda(targetFunction)
     print (a,b)
     print (xCut, yCut)
     print (deriv)
+    print (cortisolValues)
         
 main()
 

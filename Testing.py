@@ -11,6 +11,7 @@ def printLambda(func):
     splitFunc = stringFunc.split(",")
     prettyFunc = splitFunc[1].lstrip(" ")
     print(prettyFunc)
+    return
 
 def main():
     equation = createFunction(5,10)
