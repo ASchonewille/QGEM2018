@@ -13,6 +13,7 @@ This program was made to compute the calculation of concentration of cortisol
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.misc as sci
+from sympy import *
 
 global cortisolBindingRate
 global luciferaseUnitLight
@@ -29,6 +30,7 @@ def plotGraph(x,y):
     plt.show()
     return
 
+
 def determineFunction(x,y):
 
     function = np.polyfit(x,y,1,rcond=None, full=False)
@@ -36,12 +38,18 @@ def determineFunction(x,y):
     b = function[1]
     return a,b
 
-def lambdaFunction(a,b):
-
-    global targetFunction    
-    targetFunction = lambda x : a*x + b
+def createFunction(m,b):
+    global targetFunction
+    x = Symbol('x')
+    targetFunction = Lambda(x, m*x + b)
     return 
-    
+
+def printLambda(func):
+    stringFunc = (str(func)).rstrip(")")
+    splitFunc = stringFunc.split(",")
+    prettyFunc = splitFunc[1].lstrip(" ")
+    print(prettyFunc)
+    return    
 
 def cutData(x,y):
     lengthX = len(x)
@@ -52,24 +60,26 @@ def cutData(x,y):
 
 
 
-def takeDerivative(targetFunction, x0):
-    derivative = sci.derivative(targetFunction, x0)
-    return
+def takeDerivative(x0):
+    global targetFunction
+    deriv = sci.derivative(targetFunction, x0)
+    return deriv
+
 def main():
     global targetFunction
     x = [1,2,3]
     y = [2,3,4]
     plotGraph(x,y)
     a,b = determineFunction(x,y)
-    lambdaFunction(a,b)
+    createFunction(a,b)
     xCut,yCut = cutData(x,y)
     x0 = 1
-    derivative = takeDerivative(targetFunction, x0)
+    deriv = takeDerivative(x0)
 
-    print(targetFunction)
+    printLambda(targetFunction)
     print (a,b)
     print (xCut, yCut)
-    print (derivative)
+    print (deriv)
         
 main()
 
