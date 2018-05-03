@@ -1,8 +1,11 @@
 from tkinter import *
 from tkinter import font
 import random
+from math import *
 from time import sleep
 
+
+repulseDistance = 5
 numCortisol = 10
 numLuciferase = 10
 cortisol = []
@@ -85,6 +88,12 @@ class Luciferase:
         self.velocity = frameVector + randVector
         #speed limit
         self.position += self.velocity
+        for i in range (numLuciferase):
+                distance = euclideanDistance (self.position, luciferase[i].position)
+                if distance < repulseDistance:
+                        self.velocity = self.velocity * vector(-1,-1)
+                        luciferase[i].velocity = luciferase[i].velocity * vector(-1,-1)
+        
          
     def randMove (self):
         x = random.randint(-5,5)
@@ -195,8 +204,12 @@ def drawMolecules(window,canvas):
     sleep(0.1)
     canvas.delete(ALL)
 
+def euclideanDistance(vector1,vector2):
+        xDistance = float (vector1.x - vector2.x)
+        yDistance  = float (vector1.y - vector2.y)
+        radiusDistance = sqrt(xDistance**2 + yDistance**2)
+        return radiusDistance
 
-    
     
 
 def main():
