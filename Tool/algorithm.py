@@ -8,6 +8,30 @@ restrictionEnzymes = { "AatII" : "GACGTC",
                        "AfeI" : "AGCGCT",
                        "AflII" : "CTTAAG" }
 
+Codon = { "Ala" : [],
+          "Arg" : [],
+          "Asp" : [],
+          "Asn" : [],
+          "Cys" : [],
+          "Gln" : [],
+          "Glu" : [],
+          "Gly" : [],
+          "His" : [],
+          "Ile" : [],
+          "Leu" : [UUA,UUG,CUU,],
+          "Lys" : [],
+          "Met" : [],
+          "Phe" : [UUU,UUC],
+          "Pro" : [],
+          "Ser" : [],
+          "Thr" : [],
+          "Trp" : [],
+          "Tyr" : [],
+          "Val" : [],
+          "Stop" : []}
+          
+          
+
 restrictionIndices = []
 
 class node:
@@ -95,7 +119,13 @@ def SearchTree(Tree, seq, start, location):
         return
 
     if seq[location] not in Tree.children:
-        return 
+        return
+    elif seq[location] == "U":
+        if "T" not in Tree.children:
+            return
+        else
+            SearchTree(Tree.children["T"], seq, start, location+1)
+            return
     else: #seq[location] in Tree.children
         SearchTree(Tree.children[seq[location]], seq, start, location+1)
         return
@@ -105,14 +135,15 @@ def SearchDNASeq(seq):
     Tree = BuildEnzymeTree()
     for i in range(len(seq)):
         SearchTree(Tree, seq, i, i)
-    return 
-        
+    return
+
+def SilentMutationIntroduction(seq, startSite):
+    
 
 def Main(): 
     seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
     SearchDNASeq(seq)
     print(restrictionIndices)
-    
     
 
 Main()
