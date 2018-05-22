@@ -39,7 +39,7 @@ class vector:
 
 	# multiply two vectors and return the resulting vector
 	def __mul__(self, other):
-		return vector(self.x * other, self.y * other)
+		return vector(self.x * other.x, self.y * other.y)
 
 	# divide two vectors and return the resulting vector
 	def __div__(self, other):
@@ -86,12 +86,13 @@ class Luciferase:
         frameVector = self.outOfFrameRule()
         randVector = self.randMove()
         self.velocity = frameVector + randVector
+        negVector = vector(-1,-1)
         #speed limit
         self.position += self.velocity
         for i in range (numLuciferase):
                 distance = euclideanDistance (self.position, luciferase[i].position)
                 if distance < repulseDistance:
-                        self.velocity = self.velocity * vector(-1,-1)
+                        self.velocity = negVector*self.velocity
                         luciferase[i].velocity = luciferase[i].velocity * vector(-1,-1)
         
          
