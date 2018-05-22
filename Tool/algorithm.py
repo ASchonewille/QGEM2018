@@ -2,10 +2,13 @@ restrictionEnzymes = { "AatII" : "GACGTC",
                        "Acc65I" : "GGTACC",
                        "AccI" : "GTMKAC",
                        "AciI" : "CCGC",
+                       "Fake" : "AACGTTA",
                        "AclI" : "AACGTT",
                        "AcuI" : "CTGAAG",
                        "AfeI" : "AGCGCT",
                        "AflII" : "CTTAAG" }
+
+restrictionIndices = []
 
 class node:
     def __init__(self, value):
@@ -76,20 +79,39 @@ def addRestrictionSite(Tree, site):
    
     return Tree 
 
-def BuildEnzymeTree(enzymes):
+def BuildEnzymeTree():
     Tree = node("Root")
 
     for i in restrictionEnzymes:
         Tree = addRestrictionSite(Tree, restrictionEnzymes[i])
+    return Tree
 
-    print(Tree)
+def SearchTree(Tree, seq, start, location):
     
-    
-    
+    if "E" in Tree.children:
+        restrictionIndices.append([start, location])
 
-def Main():    
-    enzymes = ["AatII", "AciI", "AfeI"]
-    Tree = BuildEnzymeTree(enzymes)
+    if location == len(seq):
+        return
+
+    if seq[location] not in Tree.children:
+        return 
+    else: #seq[location] in Tree.children
+        SearchTree(Tree.children[seq[location]], seq, start, location+1)
+        return
+        
+
+def SearchDNASeq(seq):
+    Tree = BuildEnzymeTree()
+    for i in range(len(seq)):
+        SearchTree(Tree, seq, i, i)
+    return 
+        
+
+def Main(): 
+    seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
+    SearchDNASeq(seq)
+    print(restrictionIndices)
     
     
 
