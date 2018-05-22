@@ -123,7 +123,7 @@ def SearchTree(Tree, seq, start, location):
     elif seq[location] == "U":
         if "T" not in Tree.children:
             return
-        else
+        else:
             SearchTree(Tree.children["T"], seq, start, location+1)
             return
     else: #seq[location] in Tree.children
@@ -140,7 +140,7 @@ def SearchDNASeq(seq):
 def SilentMutationIntroduction(seq, startSite, maxLength):
     pass
     
-
+    pass
 def Main(): 
     seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
     SearchDNASeq(seq)
