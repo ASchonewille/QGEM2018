@@ -14,13 +14,13 @@ class node:
         return
 
     def __eq__(self, other):
-        if self.value == other.value:
-            return True
-        else:
-            return False
+        return self.value == other.value
+
+    def __ne__(self, other):
+        return not(self == other)
 
     def __repr__(self):
-        return self.value
+        return self.printTreeHelper(0)
 
     def __hash__(self):
         return hash(self.value)
@@ -28,10 +28,17 @@ class node:
     def __iter__(self):
         return self
 
+    def printTreeHelper(self, Counter):
+        treeString = "|"*Counter + str(self.value + '\n')
+        for i in self.children:
+            childString = self.children[i].printTreeHelper(Counter+1)
+            treeString += childString
+        return treeString
+
     def printChildren(self):
         childString = ""
         for i in self.children:
-            childString += self.children[i] + '/'
+            childString = childString + str(self.children[i].value) + "|"
         print(childString)
         return
     
@@ -49,32 +56,35 @@ def addRestrictionSite(Tree, site):
         if (site[0] == "A" or site[0] == "D" or site[0] == "H" or site[0] == "M" or site[0] == "N" or site[0] == "R" or site[0] == "V" or site[0] == "W"):
 
             if ("A" not in Tree.children):
-                Tree.addChild("A")                        
-            Tree.children = addRestrictionSite(Tree.children["A"], site[1:])
+                Tree.addChild("A")
+            Tree.children["A"] = addRestrictionSite(Tree.children["A"], site[1:])
             
         if (site[0] == "C" or site[0] == "B" or site[0] == "H" or site[0] == "M" or site[0] == "N" or site[0] == "S" or site[0] == "V" or site[0] == "Y"):
             if ("C" not in Tree.children):
                 Tree.addChild("C")                        
-            Tree.children = addRestrictionSite(Tree.children["C"], site[1:])
+            Tree.children["C"] = addRestrictionSite(Tree.children["C"], site[1:])
             
         if (site[0] == "G" or site[0] == "B" or site[0] == "D" or site[0] == "K" or site[0] == "N" or site[0] == "R" or site[0] == "S" or site[0] == "V"):
             if ("G" not in Tree.children):
                 Tree.addChild("G")                        
-            Tree.children = addRestrictionSite(Tree.children["G"], site[1:])
+            Tree.children["G"] = addRestrictionSite(Tree.children["G"], site[1:])
              
         if (site[0] == "T" or site[0] == "B" or site[0] == "D" or site[0] == "H" or site[0] == "K" or site[0] == "N" or site[0] == "W" or site[0] == "Y"):
             if ("T" not in Tree.children):
                 Tree.addChild("T")                        
-            Tree.children = addRestrictionSite(Tree.children["T"], site[1:])
+            Tree.children["T"] = addRestrictionSite(Tree.children["T"], site[1:])
    
     return Tree 
 
 def BuildEnzymeTree(enzymes):
     Tree = node("Root")
-    print(Tree.value)
-    print(Tree.children)
-    Tree = addRestrictionSite(Tree, "ATCG")
-    Tree.printChildren()
+
+    for i in restrictionEnzymes:
+        Tree = addRestrictionSite(Tree, restrictionEnzymes[i])
+
+    print(Tree)
+    
+    
     
 
 def Main():    
