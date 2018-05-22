@@ -76,7 +76,7 @@ class node:
             print("Already in child set")
         return
 
-def addRestrictionSite(Tree, site):
+def AddRestrictionSite(Tree, site):
     if (not site):
         Tree.addChild("E")
     else:
@@ -84,22 +84,22 @@ def addRestrictionSite(Tree, site):
 
             if ("A" not in Tree.children):
                 Tree.addChild("A")
-            Tree.children["A"] = addRestrictionSite(Tree.children["A"], site[1:])
+            Tree.children["A"] = AddRestrictionSite(Tree.children["A"], site[1:])
             
         if (site[0] == "C" or site[0] == "B" or site[0] == "H" or site[0] == "M" or site[0] == "N" or site[0] == "S" or site[0] == "V" or site[0] == "Y"):
             if ("C" not in Tree.children):
                 Tree.addChild("C")                        
-            Tree.children["C"] = addRestrictionSite(Tree.children["C"], site[1:])
+            Tree.children["C"] = AddRestrictionSite(Tree.children["C"], site[1:])
             
         if (site[0] == "G" or site[0] == "B" or site[0] == "D" or site[0] == "K" or site[0] == "N" or site[0] == "R" or site[0] == "S" or site[0] == "V"):
             if ("G" not in Tree.children):
                 Tree.addChild("G")                        
-            Tree.children["G"] = addRestrictionSite(Tree.children["G"], site[1:])
+            Tree.children["G"] = AddRestrictionSite(Tree.children["G"], site[1:])
              
         if (site[0] == "T" or site[0] == "B" or site[0] == "D" or site[0] == "H" or site[0] == "K" or site[0] == "N" or site[0] == "W" or site[0] == "Y"):
             if ("T" not in Tree.children):
                 Tree.addChild("T")                        
-            Tree.children["T"] = addRestrictionSite(Tree.children["T"], site[1:])
+            Tree.children["T"] = AddRestrictionSite(Tree.children["T"], site[1:])
    
     return Tree 
 
@@ -107,7 +107,7 @@ def BuildEnzymeTree():
     Tree = node("Root")
 
     for i in restrictionEnzymes:
-        Tree = addRestrictionSite(Tree, restrictionEnzymes[i])
+        Tree = AddRestrictionSite(Tree, restrictionEnzymes[i])
     return Tree
 
 def SearchTree(Tree, seq, start, location):
@@ -137,7 +137,8 @@ def SearchDNASeq(seq):
         SearchTree(Tree, seq, i, i)
     return
 
-def SilentMutationIntroduction(seq, startSite):
+def SilentMutationIntroduction(seq, startSite, maxLength):
+    pass
     
 
 def Main(): 
