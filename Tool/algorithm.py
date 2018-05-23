@@ -1,8 +1,4 @@
-"""
-
-"""
-
-
+from random import randin
 restrictionEnzymes = { "AatII" : "GACGTC",
                        "Acc65I" : "GGTACC",
                        "AccI" : "GTMKAC",
@@ -13,6 +9,7 @@ restrictionEnzymes = { "AatII" : "GACGTC",
                        "AfeI" : "AGCGCT",
                        "AflII" : "CTTAAG" }
 
+
 Codon = { "Ala" : ["GCT","GCC","GCA","GCG"],
           "Arg" : ["CGT","CGC","CGA","CGG","AGA","AGG"],
           "Asp" : ["GAT","GAC"],
@@ -20,11 +17,13 @@ Codon = { "Ala" : ["GCT","GCC","GCA","GCG"],
           "Cys" : ["TGT","TGC"],
           "Gln" : ["CAA","CAG"],
           "Glu" : ["GAA","GAG"],
+
           "Gly" : ["GGT","GGC","GGA","GGG"],
           "His" : ["CAT","CAC"],
           "Ile" : ["ATT","ATC","ATA"],
           "Leu" : ["TTA","TTG","CTT","CTC","CTA","CTG"],
           "Lys" : ["AAA","AAG"],
+
           "Met" : "ATG",
           "Phe" : ["TTT","TTC"],
           "Pro" : ["CCT","CCC","CCA","CCG"],
@@ -34,7 +33,6 @@ Codon = { "Ala" : ["GCT","GCC","GCA","GCG"],
           "Tyr" : ["TAT","TAC"],
           "Val" : ["GTT","GTC","GTA","GTG"],
           "Stop" : ["TAA","TAG","TGA"]}
-          
 
 class node:
     def __init__(self, value):
@@ -149,15 +147,14 @@ def MutationIntroduction(seq, Tree, restrictionIndices):
 
     if len(restrictionIndices) == 0:
         return seq
-    
-    frameStart = seq.find('ATG')
 
     stopPositions = []
+    frameStart = seq.find('ATG')
+
     for i in Codon['Stop']:
         currentStop = seq.find(i,frameStart)
         if (currentStop > -1) and ((currentStop - frameStart)%3 == 0) :
             stopPositions.append(currentStop)
-
     if len(stopPositions) == 0 or frameStart == -1:
         #Treat all as non-coding
         return seq #change later
@@ -165,6 +162,9 @@ def MutationIntroduction(seq, Tree, restrictionIndices):
     stopSite = min(stopPositions)
     
     codingRegion = CodingRegionMutations(seq, frameStart, stopSite, Tree, restrictionIndices)
+    preCodedMutatedSequence = PreCodingRegionMutations(seq, frameStart, stopSite)
+    postCodedMutatedSequence = PostCodingRegionMutations(seq, frameStart, stopSite)
+    seq = preCodedMutatedSequence + codingRegion + postCodedMutatedSequence
     
     return codingRegion
 
@@ -235,6 +235,7 @@ def Main():
     
     seq = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
     Tree, restrictionIndices = SearchDNASeq(seq)
+
 
     codedMutation = MutationIntroduction(seq, Tree, restrictionIndices)
     print(codedMutation)
