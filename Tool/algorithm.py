@@ -1,4 +1,4 @@
-from random import randin
+from random import randint
 restrictionEnzymes = { "AatII" : "GACGTC",
                        "Acc65I" : "GGTACC",
                        "AccI" : "GTMKAC",
@@ -162,32 +162,13 @@ def MutationIntroduction(seq, Tree, restrictionIndices):
     stopSite = min(stopPositions)
     
     codingRegion = CodingRegionMutations(seq, frameStart, stopSite, Tree, restrictionIndices)
-    preCodedMutatedSequence = PreCodingRegionMutations(seq, frameStart, stopSite)
-    postCodedMutatedSequence = PostCodingRegionMutations(seq, frameStart, stopSite)
+    preCodedMutatedSequence = PreCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices)
+    postCodedMutatedSequence = PostCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices)
     seq = preCodedMutatedSequence + codingRegion + postCodedMutatedSequence
     
     return seq
 
-def PostCodingRegionMutations(seq, frameStart, stopSite):
-
-    i = 0
-    validPostSites = []
-    for i in range(len(restrictionIndices)):
-        validPostSites.append(restrictionIndices[i]) 
-        i= i + 1
-    j = 0
-    for j in range(len(validPostSites)):
-        tempSite = []
-        tempSite.append(validPostSites[j][0])
-        tempSite.append(validPostSites[j][1])
-        randomPosition = randint(tempSite[0],tempSite[1])    
-        seq = seq[:randomPosition] + "C" + seq[randomPosition:]
-        j = j + 1
-    postCodedMutatedSequence = seq[stopSite:]
-    return postCodedMutatedSequence
-    
-
-def PreCodingRegionMutations(seq, frameStart, stopSite):
+def PreCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices):
     
     i = 0
     validPreSites = []
@@ -269,13 +250,34 @@ def SilentMutation(seq, frameStart, Tree, restrictionIndex):
     print("Could not resolve with one mutation")
     return seq
 
+
+def PostCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices):
+
+    i = 0
+    validPostSites = []
+    for i in range(len(restrictionIndices)):
+        validPostSites.append(restrictionIndices[i]) 
+        i= i + 1
+    j = 0
+    for j in range(len(validPostSites)):
+        tempSite = []
+        tempSite.append(validPostSites[j][0])
+        tempSite.append(validPostSites[j][1])
+        randomPosition = randint(tempSite[0],tempSite[1])    
+        seq = seq[:randomPosition] + "C" + seq[randomPosition+1:]
+        j = j + 1
+    postCodedMutatedSequence = seq[(stopSite+3):]
+    return postCodedMutatedSequence
+    
+
 def Main():
     
-    seq = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
+    seq = 'AAAAAAAAAAAAAAAACCGCAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
     Tree, restrictionIndices = SearchDNASeq(seq)
 
 
     codedMutation = MutationIntroduction(seq, Tree, restrictionIndices)
+    print(seq)
     print(codedMutation)
 
 Main()
