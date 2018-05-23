@@ -1,38 +1,40 @@
+"""
+
+"""
+
+
 restrictionEnzymes = { "AatII" : "GACGTC",
                        "Acc65I" : "GGTACC",
                        "AccI" : "GTMKAC",
                        "AciI" : "CCGC",
-                       "Fake" : "AACGTTA",
+                       "Fake" : "TGGAAAC",
                        "AclI" : "AACGTT",
                        "AcuI" : "CTGAAG",
                        "AfeI" : "AGCGCT",
                        "AflII" : "CTTAAG" }
 
-Codon = { "Ala" : ["GCU","GCC","GCA","GCG"],
-          "Arg" : ["CGU","CGC","CGA","CGG","AGA","AGG"],
-          "Asp" : ["GAU","GAC"],
-          "Asn" : ["AAU","AAC"],
-          "Cys" : ["UGU","UGC"],
+Codon = { "Ala" : ["GCT","GCC","GCA","GCG"],
+          "Arg" : ["CGT","CGC","CGA","CGG","AGA","AGG"],
+          "Asp" : ["GAT","GAC"],
+          "Asn" : ["AAT","AAC"],
+          "Cys" : ["TGT","TGC"],
           "Gln" : ["CAA","CAG"],
           "Glu" : ["GAA","GAG"],
-          "Gly" : ["GGU","GGC","GGA","GGG"],
-          "His" : ["CAU","CAC"],
-          "Ile" : ["AUU","AUC","AUA"],
-          "Leu" : ["UUA","UUG","CUU","CUC","CUA","CUG"],
+          "Gly" : ["GGT","GGC","GGA","GGG"],
+          "His" : ["CAT","CAC"],
+          "Ile" : ["ATT","ATC","ATA"],
+          "Leu" : ["TTA","TTG","CTT","CTC","CTA","CTG"],
           "Lys" : ["AAA","AAG"],
-          "Met" : ["AUG"],
-          "Phe" : ["UUU","UUC"],
-          "Pro" : ["CCU","CCC","CCA","CCG"],
-          "Ser" : ["UCU","UCC","UCA","UCG","AGU","AGC"],
-          "Thr" : ["ACU","ACC","ACA","ACG"],
-          "Trp" : ["UGG"],
-          "Tyr" : ["UAU","UAC"],
-          "Val" : ["GUU","GUC","GUA","GUG"],
-          "Stop" : ["UAA","UAG","UGA"]}
+          "Met" : "ATG",
+          "Phe" : ["TTT","TTC"],
+          "Pro" : ["CCT","CCC","CCA","CCG"],
+          "Ser" : ["TCT","TCC","TCA","TCG","AGT","AGC"],
+          "Thr" : ["ACT","ACC","ACA","ACG"],
+          "Trp" : "TGG",
+          "Tyr" : ["TAT","TAC"],
+          "Val" : ["GTT","GTC","GTA","GTG"],
+          "Stop" : ["TAA","TAG","TGA"]}
           
-          
-
-restrictionIndices = []
 
 class node:
     def __init__(self, value):
@@ -113,61 +115,128 @@ def BuildEnzymeTree():
         Tree = AddRestrictionSite(Tree, restrictionEnzymes[i])
     return Tree
 
-def SearchTree(Tree, seq, start, location):
+def SearchTree(Tree, seq, start, location, restrictionIndices):
     
     if "E" in Tree.children:
         restrictionIndices.append([start, location])
 
     if location == len(seq):
-        return
+        return restrictionIndices
 
     if seq[location] not in Tree.children:
-        return
+        return restrictionIndices
     elif seq[location] == "U":
         if "T" not in Tree.children:
-            return
+            return restrictionIndices
         else:
-            SearchTree(Tree.children["T"], seq, start, location+1)
-            return
+            SearchTree(Tree.children["T"], seq, start, location+1, restrictionIndices)
+            return restrictionIndices
     else: #seq[location] in Tree.children
-        SearchTree(Tree.children[seq[location]], seq, start, location+1)
-        return
+        SearchTree(Tree.children[seq[location]], seq, start, location+1, restrictionIndices)
+        return restrictionIndices
         
 
 def SearchDNASeq(seq):
     Tree = BuildEnzymeTree()
+    restrictionIndices = []
     for i in range(len(seq)):
-        SearchTree(Tree, seq, i, i)
-    return Tree
+        restrictionIndices = SearchTree(Tree, seq, i, i, restrictionIndices)
+    return Tree, restrictionIndices
 
 
 #Assumes that the first occurance of ATG is the start of the reading frame
-def SilentMutationIntroduction(seq):
+def MutationIntroduction(seq, Tree, restrictionIndices):
+
+    if len(restrictionIndices) == 0:
+        return seq
     
     frameStart = seq.find('ATG')
 
+    stopPositions = []
     for i in Codon['Stop']:
-        stopPositions[i] = seq.find(Codon['Stop'][i],frameStart)
+        currentStop = seq.find(i,frameStart)
+        if (currentStop > -1) and ((currentStop - frameStart)%3 == 0) :
+            stopPositions.append(currentStop)
+
+    if len(stopPositions) == 0 or frameStart == -1:
+        #Treat all as non-coding
+        return seq #change later
 
     stopSite = min(stopPositions)
     
-    codingRegion = CodingRegionMutations(seq, frameStart, stopSite)
-    beginningNonCodingRegion, endNonCodingRegion = NonCodingRegionMutations(seq, frameStart, stopSite)
-    seq = beginningNonCodingRegion + codingRegion + endNonCodingRegion
+    codingRegion = CodingRegionMutations(seq, frameStart, stopSite, Tree, restrictionIndices)
     
+    return codingRegion
+
+def CodingRegionMutations(seq, frameStart, stopSite, Tree, restrictionIndices):
+    validSite = False
+    numRestriction = len(restrictionIndices)
+    counter = -1
+    firstSiteIndex = -1
+    lastSiteIndex = numRestriction
+    
+    while (not validSite) and (counter < (len(restrictionIndices)-1)):
+        counter += 1        
+        if restrictionIndices[counter][0] >= frameStart and firstSiteIndex == -1:
+            firstSiteIndex  = counter
+        if restrictionIndices[counter][1] > stopSite + 3:
+            lastSiteIndex = counter
+            validSite = True
+
+    if firstSiteIndex == lastSiteIndex:
+        return seq[frameStart:(stopSite+3)]
+
+    mutatedSeq = seq
+    codingRegionRestrictionSites = restrictionIndices[firstSiteIndex:lastSiteIndex]
+
+    for i in codingRegionRestrictionSites:
+        mutatedSeq = SilentMutation(mutatedSeq, frameStart, Tree, i)
+        
+    return mutatedSeq[frameStart:(stopSite+3)]
+
+def SilentMutation(seq, frameStart, Tree, restrictionIndex):
+
+    shift = (restrictionIndex[0] - frameStart) % 3
+    codonStart = restrictionIndex[0] - shift
+    currentCodon = seq[codonStart:(codonStart + 3)]
+
+    aminoAcid = [key for key, value in Codon.items() if currentCodon in value][0]
+
+    if aminoAcid == 'Met' or aminoAcid == 'Trp':
+        if (codonStart + 3) >= restrictionIndex[1]:
+            print("Could not resolve Restriction Site")
+            return seq
+        else:
+            return SilentMutation(seq, frameStart, Tree, [(codonStart + 3),restrictionIndex[1]])
+
+    differences = []
+    for i in Codon[aminoAcid]:
+        if not (i == currentCodon):
+            differences.append(sum(1 for a, b in zip(i, currentCodon) if a != b))
+        else: 
+            differences.append(4)
+
+    minMut = min(differences)
+    while minMut < 4:
+        position = differences.index(minMut)
+        mutatedSeq = seq[:codonStart] + Codon[aminoAcid][position] + seq[(codonStart + 3):]
+        numRestrictionSites = 0
+        for k in range(Tree.value + 3):
+            numRestrictionSites += len(SearchTree(Tree, seq, (codonStart - Tree.value), (codonStart - Tree.value), []))
+        if numRestrictionSites == 0 :
+            return mutatedSeq
+        else:
+            differences[position] = 4
+            minMut = min(differences)
+    print("Could not resolve with one mutation")
     return seq
 
-def CodingRegionMutations(seq, frameStart, stopSite):
-    pass
+def Main():
+    
+    seq = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
+    Tree, restrictionIndices = SearchDNASeq(seq)
 
-def NonCodingRegionMutations(seq, frameStart, stopSite):
-    pass
-    
-def Main(): 
-    seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
-    Tree = SearchDNASeq(seq)
-    print(Tree)
-    print(restrictionIndices)
-    
+    codedMutation = MutationIntroduction(seq, Tree, restrictionIndices)
+    print(codedMutation)
 
 Main()
