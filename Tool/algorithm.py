@@ -1,3 +1,5 @@
+from random import randint
+
 restrictionEnzymes = { "AatII" : "GACGTC",
                        "Acc65I" : "GGTACC",
                        "AccI" : "GTMKAC",
@@ -30,7 +32,7 @@ Codon = { "Ala" : ["GCU","GCC","GCA","GCG"],
           "Val" : ["GUU","GUC","GUA","GUG"],
           "Stop" : ["UAA","UAG","UGA"]}
           
-          
+                                                                                  
 
 restrictionIndices = []
 
@@ -143,31 +145,77 @@ def SearchDNASeq(seq):
 
 #Assumes that the first occurance of ATG is the start of the reading frame
 def SilentMutationIntroduction(seq):
-    
+    stopPositions = []
     frameStart = seq.find('ATG')
 
     for i in Codon['Stop']:
-        stopPositions[i] = seq.find(Codon['Stop'][i],frameStart)
-
+        print (i)
+        stopPositions.append(seq.find(i,frameStart))
+    print(stopPositions)    
     stopSite = min(stopPositions)
     
     codingRegion = CodingRegionMutations(seq, frameStart, stopSite)
-    beginningNonCodingRegion, endNonCodingRegion = NonCodingRegionMutations(seq, frameStart, stopSite)
-    seq = beginningNonCodingRegion + codingRegion + endNonCodingRegion
+    preCodedMutatedSequence = PreCodingRegionMutations(seq, frameStart, stopSite)
+    postCodedMutatedSequence = PostCodingRegionMutations(seq, frameStart, stopSite)
+    seq = preCodedMutatedSequence + codingRegion + postCodedMutatedSequence
     
     return seq
 
 def CodingRegionMutations(seq, frameStart, stopSite):
-    pass
+    #FIX THIS
+    filler = "FILLER"
+    return filler
 
-def NonCodingRegionMutations(seq, frameStart, stopSite):
-    pass
+
+def PostCodingRegionMutations(seq, frameStart, stopSite):
+
+    i = 0
+    validPostSites = []
+    for i in range(len(restrictionIndices)):
+        validPostSites.append(restrictionIndices[i]) 
+        i= i + 1
+    j = 0
+    for j in range(len(validPostSites)):
+        tempSite = []
+        tempSite.append(validPostSites[j][0])
+        tempSite.append(validPostSites[j][1])
+        randomPosition = randint(tempSite[0],tempSite[1])    
+        seq = seq[:randomPosition] + "C" + seq[randomPosition:]
+        j = j + 1
+    postCodedMutatedSequence = seq[stopSite:]
+    return postCodedMutatedSequence
+    
+
+def PreCodingRegionMutations(seq, frameStart, stopSite):
+    
+    i = 0
+    validPreSites = []
+    while restrictionIndices[i][0] < frameStart:
+        validPreSites.append(restrictionIndices[i])
+        i= i + 1       
+    j = 0
+    for j in range(len(validPreSites)):
+        tempSite = []
+        tempSite.append(validPreSites[j][0])
+        tempSite.append(validPreSites[j][1])
+        randomPosition = randint(tempSite[0],tempSite[1])
+        seq = seq[:randomPosition] + "C" + seq[randomPosition:]
+        j = j + 1
+    preCodedMutatedSequence = seq[:frameStart]
+    return preCodedMutatedSequence
     
 def Main(): 
-    seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
+    
+    seq = 'ACTGAAGAAGATGCCGCAAAUAAGAATAA'
+    stopSite = 23
+    frameStart = seq.find('ATG')
     Tree = SearchDNASeq(seq)
     print(Tree)
     print(restrictionIndices)
     
+    post = PostCodingRegionMutations (seq, frameStart, stopSite)
+    pre = PreCodingRegionMutations (seq, frameStart, stopSite)
+    print (pre)
+    print (post)
 
 Main()
