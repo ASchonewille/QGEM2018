@@ -56,7 +56,7 @@ class node:
         return self
 
     def printTreeHelper(self, Counter):
-        treeString = "|"*Counter + str(self.value + '\n')
+        treeString = "|"*Counter + str(self.value) + '\n'
         for i in self.children:
             childString = self.children[i].printTreeHelper(Counter+1)
             treeString += childString
@@ -104,9 +104,12 @@ def AddRestrictionSite(Tree, site):
     return Tree 
 
 def BuildEnzymeTree():
-    Tree = node("Root")
+    Tree = node(0)
 
     for i in restrictionEnzymes:
+        currentLen = len(restrictionEnzymes[i])
+        if currentLen > Tree.value:
+            Tree.value = currentLen
         Tree = AddRestrictionSite(Tree, restrictionEnzymes[i])
     return Tree
 
@@ -135,15 +138,35 @@ def SearchDNASeq(seq):
     Tree = BuildEnzymeTree()
     for i in range(len(seq)):
         SearchTree(Tree, seq, i, i)
-    return
+    return Tree
 
-def SilentMutationIntroduction(seq, startSite, maxLength):
+
+#Assumes that the first occurance of ATG is the start of the reading frame
+def SilentMutationIntroduction(seq):
+    
+    frameStart = seq.find('ATG')
+
+    for i in Codon['Stop']:
+        stopPositions[i] = seq.find(Codon['Stop'][i],frameStart)
+
+    stopSite = min(stopPositions)
+    
+    codingRegion = CodingRegionMutations(seq, frameStart, stopSite)
+    beginningNonCodingRegion, endNonCodingRegion = NonCodingRegionMutations(seq, frameStart, stopSite)
+    seq = beginningNonCodingRegion + codingRegion + endNonCodingRegion
+    
+    return seq
+
+def CodingRegionMutations(seq, frameStart, stopSite):
+    pass
+
+def NonCodingRegionMutations(seq, frameStart, stopSite):
     pass
     
-    pass
 def Main(): 
     seq = 'GACGTCCGCCCCCCCCCCCCCGCCCCCGCCCCGCCCCCCAACGTTA'
-    SearchDNASeq(seq)
+    Tree = SearchDNASeq(seq)
+    print(Tree)
     print(restrictionIndices)
     
 
