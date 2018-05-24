@@ -29,7 +29,7 @@
         <a class='active item blue' href='./home.php'>
             Home
         </a>
-        <a class='item' href='./RestrictionSites.php'>
+        <a class='item' href='./RestrictionSites.py'>
             Restriction Sites
         </a>
 
