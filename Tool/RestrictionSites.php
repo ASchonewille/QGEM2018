@@ -42,7 +42,7 @@
         <p>How to use this tool</p>  
     </div>
 
-    <form class="ui form segment" id="RestrictionEliminationForm" action="./RestrictionSubmit.php" method="get">
+    <form class="ui form segment" id="RestrictionEliminationForm" action="./RestrictionSubmit.py" method="get">
             <div class="field">
                     <label>Target Sequence</label>
                     <textarea name="sequence"></textarea> 

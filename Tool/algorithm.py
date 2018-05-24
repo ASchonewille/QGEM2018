@@ -241,7 +241,7 @@ def SilentMutation(seq, frameStart, Tree, restrictionIndex):
         mutatedSeq = seq[:codonStart] + Codon[aminoAcid][position] + seq[(codonStart + 3):]
         numRestrictionSites = 0
         for k in range(Tree.value + 3):
-            numRestrictionSites += len(SearchTree(Tree, seq, (codonStart - Tree.value), (codonStart - Tree.value), []))
+            numRestrictionSites += len(SearchTree(Tree, mutatedSeq, (codonStart - Tree.value), (codonStart - Tree.value), []))
         if numRestrictionSites == 0 :
             return mutatedSeq
         else:
@@ -269,7 +269,7 @@ def PostCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices):
     postCodedMutatedSequence = seq[(stopSite+3):]
     return postCodedMutatedSequence
     
-
+"""
 def Main():
     
     seq = 'ACGCCAAAAAAAAAAAAAAAACCGCAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
@@ -283,3 +283,4 @@ def Main():
 
 Main()
 
+"""
