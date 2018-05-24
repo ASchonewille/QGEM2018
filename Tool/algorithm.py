@@ -269,7 +269,7 @@ def PostCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices):
     postCodedMutatedSequence = seq[(stopSite+3):]
     return postCodedMutatedSequence
     
-
+"""
 def Main():
     
     seq = 'AAAAAAAAAAAAAAAACCGCAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
@@ -281,3 +281,4 @@ def Main():
     print(codedMutation)
 
 Main()
+"""

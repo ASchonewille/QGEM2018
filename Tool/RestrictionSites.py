@@ -1,5 +1,13 @@
 #!"C:/Users/Abigael/AppData/Local/Programs/Python/Python36-32/python.exe"
-print("Content-Type: text/html\n")
+
+print("Content-Type: text/html\r\n")
+
+
+import algorithm
+seq = 'AAAAAAAAAAAAAAAACCGCAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
+Tree, restrictionIndices = algorithm.SearchDNASeq(seq)
+
+codedMutation = algorithm.MutationIntroduction(seq, Tree, restrictionIndices)
 
 print("""
 <html>
@@ -42,6 +50,8 @@ print("""
   <div class="ui segment">
     <h1>Restriction Site Elimination</h1>
     <p>How to use this tool</p>
+    <p> new addition </p>
+    <p>""" + codedMutation + """</p>    
   </div>
   
   <div class="ui segment">  
