@@ -3,12 +3,6 @@
 print("Content-Type: text/html\r\n")
 
 
-import algorithm
-seq = 'AAAAAAAAAAAAAAAACCGCAAAAAAAAAAAAATGCCCCCCTGGAAACCCCCGCCCCCCCGCCCCCCCTAAAAAAAAAAAAAA'
-Tree, restrictionIndices = algorithm.SearchDNASeq(seq)
-
-codedMutation = algorithm.MutationIntroduction(seq, Tree, restrictionIndices)
-
 print("""
 <html>
 <head>
@@ -35,45 +29,18 @@ print("""
 <div class="wrapper">
 <div class="ui container">
     <div class='ui pointing menu'>
-		<div class= "ui tiny image">
-			<img src="QGEMLogo.jpg">
+	<div class= "ui tiny image">
+            <img src="QGEMLogo.jpg">
         </div>
         <a class='item' href='./home.php'>
             Home
         </a>
-        <a class='active item blue' href='./RestrictionSites.php'>
+        <a class='active item green' href='./RestrictionSites.php'>
             Restriction Sites
         </a>
 
     </div>
-	
-  <div class="ui segment">
-    <h1>Restriction Site Elimination</h1>
-    <p>How to use this tool</p>
-    <p> new addition </p>
-    <p>""" + codedMutation + """</p>    
-  </div>
-  
-  <div class="ui segment">  
-	<form class="ui form">
-		<div class="field">
-			<label>Target Sequence</label>
-			<textarea name="sequence"></textarea> 
-		</div>
-		
-		<div class="ui right labeled input">
-			<input type="text" name="inputFile" placeholder="Choose a file">
-			<label for="sequenceFile" class="ui button">
-				Browse Files
-			</label>
-			<input type="file" name="sequenceFile" style="display: none">
-		</div>
-	</form>  
-  </div>
-  
 </div>
-</div>  
-
-</body>
-
-</html>""")
+</div>
+</html>
+""")
