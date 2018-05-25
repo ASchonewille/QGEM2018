@@ -57,6 +57,7 @@ print("""
 form = cgi.FieldStorage()
 
 seq = (form["sequence"].value)
+
 if len(seq) == 0:
     print("No sequence was provided")
 else:
