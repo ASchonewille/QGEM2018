@@ -168,6 +168,7 @@ def MutationIntroduction(seq, Tree, restrictionIndices):
     
     return seq
 
+
 def PreCodingRegionMutations(seq, frameStart, stopSite, restrictionIndices):
     
     i = 0
@@ -218,9 +219,7 @@ def SilentMutation(seq, frameStart, Tree, restrictionIndex):
     shift = (restrictionIndex[0] - frameStart) % 3
     codonStart = restrictionIndex[0] - shift
     currentCodon = seq[codonStart:(codonStart + 3)]
-
     aminoAcid = [key for key, value in Codon.items() if currentCodon in value][0]
-
     if aminoAcid == 'Met' or aminoAcid == 'Trp':
         if (codonStart + 3) >= restrictionIndex[1]:
             print("Could not resolve Restriction Site")
@@ -278,9 +277,8 @@ def Main():
 
 
     codedMutation = MutationIntroduction(seq, Tree, restrictionIndices)
-    print(seq)
+    print(seq[6:])
     print(codedMutation)
-
 Main()
-
 """
+

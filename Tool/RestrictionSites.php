@@ -8,6 +8,7 @@
 
     <!-- Site Properties -->
     <title>QGEM</title>
+	<link rel="icon" href="QGEMLogo.jpg">
     <link rel="stylesheet" type="text/css" href=   "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.css">
     <link rel="stylesheet" type="text/css" href=   "./QGEM.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -31,34 +32,30 @@
         <a class='item' href='./home.php'>
             Home
         </a>
-        <a class='active item green' href='./RestrictionSites.py'>
+        <a class='active item green' href='./RestrictionSites.php'>
             Restriction Sites
         </a>
 
     </div>
-	
-    <div class="ui segment">
+
+    <form class="ui form segment" id="RestrictionEliminationForm" action="./RestrictionSubmit.py" method="get" >
         <h1>Restriction Site Elimination</h1>
         <p>How to use this tool</p>  
-    </div>
-
-    <form class="ui form segment" id="RestrictionEliminationForm" action="./RestrictionSubmit.py" method="get">
+        <div class="ui segment">
             <div class="field">
                     <label>Target Sequence</label>
                     <textarea name="sequence"></textarea> 
             </div>
             
-            <div class="ui right labeled input">
-                    <input type="text" name="inputFile" placeholder="Choose a file">
-                    <label for="sequenceFile" class="ui button">
-                            Browse Files
-                    </label>
-                    <input type="file" name="sequenceFile" style="display: none">
-            </div>
-            <br>
-            <br>
-            <div class='ui darkGreen submit button' onclick='document.getElementById("RestrictionEliminationForm").submit();'>Submit
-            </div>
+				<label for="sequenceFile" class="ui button">
+					<i class="ui file icon"></i> 
+					Upload File
+				</label>
+				<input type="file" (change)="fileEvent($event)" class="inputfile" name="sequenceFile" style="display: none" id="sequenceFile"/>
+
+				<div class='ui right floated submit button' id='submitButton' onclick='document.getElementById("RestrictionEliminationForm").submit();'>Submit
+				</div>
+		</div>
     </form>  
   
 </div>
